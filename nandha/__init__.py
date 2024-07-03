@@ -1,22 +1,27 @@
 
 
 
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
+from telegram.ext import ApplicationBuilder, PicklePersistence, ContextTypes, CommandHandler
 from config import *
 
 
 import logging
+import aiohttp
 
 
 LOGGER = logging.getLogger(__name__)
 
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
+FORMAT = f"[Bot] %(message)s"
+logging.basicConfig(level=logging.INFO, handlers=[logging.FileHandler('logs.txt'),
+              logging.StreamHandler()], format=FORMAT)
+
+
 
 logging.getLogger('httpx').setLevel(logging.WARNING)
 
 
+# Clients
+persistence = PicklePersistence(filepath='db')
+app = ApplicationBuilder().token(TOKEN).persistence(persistence).build()
 
-app = ApplicationBuilder().token(TOKEN).build()
+aiohttpsession = aiohttp.ClientSession()
